@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.simplyrojgar.repository.UserRepository;
 import com.simplyrojgar.repository.RoleRepository;
 import com.simplyrojgar.entity.User;
+import com.simplyrojgar.config.JwtTokenUtil;
+import com.simplyrojgar.dto.AuthResponse;
 import com.simplyrojgar.dto.LoginDto;
 import com.simplyrojgar.dto.SignUpDto;
 import com.simplyrojgar.entity.Role;
@@ -36,16 +39,38 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired 
+    private JwtTokenUtil jwtUtil;
 
     @PostMapping("/signin")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
+    public ResponseEntity<AuthResponse> authenticateUser(@RequestBody LoginDto loginDto){
+    	try {
+            
+        	Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    loginDto.getUsernameOrEmail(), loginDto.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+            User user1 = new User();
+            user1.setName(user.getUsername());
+            user1.setUsername(user.getUsername());
+            user1.setEmail(user.getUsername());
+            user1.setPassword(user.getPassword());
+            
+            String accessToken = jwtUtil.generateAccessToken(user1);
+            AuthResponse response = new AuthResponse(user1.getEmail(), accessToken);
+             
+            return new ResponseEntity<>(response, HttpStatus.OK);
+            
+        } catch (BadCredentialsException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } finally {
+		}
+
     }
-
+    
+    
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto){
 

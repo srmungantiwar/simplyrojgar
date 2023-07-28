@@ -15,7 +15,7 @@ import lombok.Data;
 @Table(name="languages")
 @Data
 @Component
-public class Languages {
+public class Language {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

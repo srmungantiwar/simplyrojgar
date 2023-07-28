@@ -19,7 +19,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) ->
                         //authorize.anyRequest().authenticated()
                         authorize.requestMatchers(HttpMethod.GET, "/languages/**").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/languages/add/**").permitAll()
+                                .requestMatchers(HttpMethod.DELETE,"/languages/id/**").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/languages/**").permitAll()
                                 .anyRequest().authenticated()
 
                 );

@@ -14,7 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"username"}),
-        @UniqueConstraint(columnNames = {"email"})
+        @UniqueConstraint(columnNames = {"email"}),
+        @UniqueConstraint(columnNames = {"phone-number"})
 })
 public class User implements UserDetails{
 
@@ -22,8 +23,11 @@ public class User implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
+    @Column(name = "username")
     private String username;
     private String email;
+    @Column(name = "phone-number")
+    private String phoneNumber;
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -41,7 +45,7 @@ public class User implements UserDetails{
     public String getUsername() {
         return this.email;
     }
- 
+    
     @Override
     public boolean isAccountNonExpired() {
         return true;

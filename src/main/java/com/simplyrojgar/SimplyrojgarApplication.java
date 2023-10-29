@@ -2,9 +2,10 @@ package com.simplyrojgar;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class SimplyrojgarApplication {
+public class SimplyrojgarApplication extends SpringBootServletInitializer{
 
 	public static void main(String[] args) {
 		SpringApplication.run(SimplyrojgarApplication.class, args);
